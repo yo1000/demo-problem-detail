@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @SpringBootApplication
 public class ProblemDetailApplication {
@@ -29,15 +28,22 @@ public class ProblemDetailApplication {
 					HttpStatus.BAD_REQUEST,
 					"Summary message"
 			);
-			detail.setProperty("errors", List.of(Map.ofEntries(
-					Map.entry("property", "username"),
-					Map.entry("value", ""),
-					Map.entry("reason", "required"),
-					Map.entry("message", "Username is required")
+			detail.setProperty("reasons", List.of(new Reason(
+					"required",
+					"Username is required",
+					"username",
+					""
 			)));
 
 			// https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ResponseEntity.html#of(org.springframework.http.ProblemDetail)
 			return ResponseEntity.of(detail).build();
 		}
 	}
+
+	public record Reason(
+			String code,
+			String message,
+			String property,
+			String value
+	) {}
 }
