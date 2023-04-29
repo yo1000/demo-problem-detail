@@ -14,36 +14,40 @@ import java.util.List;
 @SpringBootApplication
 public class ProblemDetailApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ProblemDetailApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ProblemDetailApplication.class, args);
+    }
 
-	@RestController
-	@RequestMapping("/problem")
-	public static class ProblemDetailDemoController {
-		@GetMapping
-		public ResponseEntity get() {
-			// https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ProblemDetail.html
-			ProblemDetail detail = ProblemDetail.forStatusAndDetail(
-					HttpStatus.BAD_REQUEST,
-					"Summary message"
-			);
-			detail.setProperty("reasons", List.of(new Reason(
-					"required",
-					"Username is required",
-					"username",
-					""
-			)));
+    @RestController
+    @RequestMapping("/problem-demo")
+    public static class ProblemDetailDemoController {
+        @GetMapping
+        public ResponseEntity get() {
+            // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ProblemDetail.html
+            ProblemDetail detail = ProblemDetail.forStatus(
+                    HttpStatus.BAD_REQUEST
+            );
+            // When response must contain summary message, refer to following.
+            // ProblemDetail detail = ProblemDetail.forStatusAndDetail(
+            //         HttpStatus.BAD_REQUEST,
+            //         "Params are invalid."
+            // );
+            detail.setProperty("params", List.of(new Param(
+                    "username",
+                    "",
+                    "required",
+                    "Username is required."
+            )));
 
-			// https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ResponseEntity.html#of(org.springframework.http.ProblemDetail)
-			return ResponseEntity.of(detail).build();
-		}
-	}
+            // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ResponseEntity.html#of(org.springframework.http.ProblemDetail)
+            return ResponseEntity.of(detail).build();
+        }
+    }
 
-	public record Reason(
-			String code,
-			String message,
-			String property,
-			String value
-	) {}
+    public record Param(
+            String name,
+            String value,
+            String code,
+            String reason
+    ) {}
 }
